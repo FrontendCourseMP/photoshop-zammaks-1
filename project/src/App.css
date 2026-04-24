@@ -1,0 +1,152 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #1e1e1e;
+}
+
+.app-header {
+  background: #2d2d2d;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #3a3a3a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.app-container {
+  display: flex;
+  flex: 1;
+  gap: 0;
+  overflow: hidden;
+}
+
+.left-panel {
+  width: 280px;
+  background: #252526;
+  border-right: 1px solid #3a3a3a;
+  overflow-y: auto;
+  padding: 0;
+  box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e1e1e;
+  overflow: auto;
+  position: relative;
+}
+
+.canvas-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 1.2rem;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+.canvas-placeholder p {
+  margin: 0;
+}
+
+.right-panel {
+  width: 320px;
+  background: #252526;
+  border-left: 1px solid #3a3a3a;
+  overflow-y: auto;
+  padding: 1.5rem;
+  box-shadow: inset 2px 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.right-panel h3 {
+  margin: 0 0 1.5rem 0;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #3a3a3a;
+  padding-bottom: 0.75rem;
+}
+
+.panel-content {
+  color: #fff;
+}
+
+.app-footer {
+  background: #2d2d2d;
+  border-top: 1px solid #3a3a3a;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.85rem;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Scrollbar styling */
+.left-panel::-webkit-scrollbar,
+.right-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.left-panel::-webkit-scrollbar-track,
+.right-panel::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.left-panel::-webkit-scrollbar-thumb,
+.right-panel::-webkit-scrollbar-thumb {
+  background: #464647;
+  border-radius: 4px;
+}
+
+.left-panel::-webkit-scrollbar-thumb:hover,
+.right-panel::-webkit-scrollbar-thumb:hover {
+  background: #5a5a5b;
+}
+
+@media (max-width: 1200px) {
+  .left-panel {
+    width: 240px;
+  }
+
+  .right-panel {
+    width: 280px;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .left-panel,
+  .right-panel {
+    width: 100%;
+    border: none;
+    max-height: 200px;
+    border-bottom: 1px solid #3a3a3a;
+  }
+
+  .left-panel {
+    border-right: none;
+    box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .right-panel {
+    border-left: none;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+
