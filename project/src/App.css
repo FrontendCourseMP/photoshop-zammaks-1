@@ -8,14 +8,13 @@
 .app-header {
   background: #2d2d2d;
   color: #fff;
-  padding: 1rem 1.5rem;
+  padding: 0.35rem 1rem;
   border-bottom: 1px solid #3a3a3a;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .app-header h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
@@ -23,17 +22,82 @@
 .app-container {
   display: flex;
   flex: 1;
-  gap: 0;
   overflow: hidden;
 }
 
 .left-panel {
-  width: 280px;
+  width: 200px;
+  min-width: 200px;
   background: #252526;
   border-right: 1px solid #3a3a3a;
   overflow-y: auto;
-  padding: 0;
-  box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Export section (shown when image is loaded) */
+.export-section {
+  padding: 0.6rem 0.75rem;
+  border-top: 1px solid #3a3a3a;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.export-label {
+  color: #777;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.export-buttons {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.export-status {
+  color: #7dd3fc;
+  font-size: 0.72rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Shared button base */
+.btn {
+  padding: 0.3rem 0.4rem;
+  border: 1px solid #464647;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: #3a3a3a;
+  color: #e0e0e0;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  background: #464647;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-png:hover:not(:disabled) {
+  background: #4a5a8a;
+  border-color: #5a7aaa;
+}
+
+.btn-jpg:hover:not(:disabled) {
+  background: #5a4a6a;
+  border-color: #7a6a8a;
+}
+
+.btn-gb7:hover:not(:disabled) {
+  background: #3a5a4a;
+  border-color: #4a8a6a;
 }
 
 .main-content {
@@ -42,111 +106,48 @@
   align-items: center;
   justify-content: center;
   background: #1e1e1e;
-  overflow: auto;
-  position: relative;
+  overflow: hidden;
 }
 
 .canvas-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-  font-size: 1.2rem;
-  text-align: center;
-  height: 100%;
-  width: 100%;
-}
-
-.canvas-placeholder p {
-  margin: 0;
-}
-
-.right-panel {
-  width: 320px;
-  background: #252526;
-  border-left: 1px solid #3a3a3a;
-  overflow-y: auto;
-  padding: 1.5rem;
-  box-shadow: inset 2px 0 4px rgba(0, 0, 0, 0.3);
-}
-
-.right-panel h3 {
-  margin: 0 0 1.5rem 0;
-  color: #fff;
+  color: #555;
   font-size: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-bottom: 1px solid #3a3a3a;
-  padding-bottom: 0.75rem;
-}
-
-.panel-content {
-  color: #fff;
 }
 
 .app-footer {
   background: #2d2d2d;
   border-top: 1px solid #3a3a3a;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.85rem;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3);
+  padding: 0.35rem 1rem;
+  font-size: 0.8rem;
 }
 
-/* Scrollbar styling */
-.left-panel::-webkit-scrollbar,
-.right-panel::-webkit-scrollbar {
-  width: 8px;
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }
 
-.left-panel::-webkit-scrollbar-track,
-.right-panel::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
-.left-panel::-webkit-scrollbar-thumb,
-.right-panel::-webkit-scrollbar-thumb {
-  background: #464647;
-  border-radius: 4px;
-}
-
-.left-panel::-webkit-scrollbar-thumb:hover,
-.right-panel::-webkit-scrollbar-thumb:hover {
-  background: #5a5a5b;
-}
-
-@media (max-width: 1200px) {
-  .left-panel {
-    width: 240px;
-  }
-
-  .right-panel {
-    width: 280px;
-    padding: 1rem;
-  }
-}
+/* Scrollbar */
+.left-panel::-webkit-scrollbar { width: 6px; }
+.left-panel::-webkit-scrollbar-track { background: #1a1a1a; }
+.left-panel::-webkit-scrollbar-thumb { background: #464647; border-radius: 3px; }
+.left-panel::-webkit-scrollbar-thumb:hover { background: #5a5a5b; }
 
 @media (max-width: 768px) {
-  .app-container {
-    flex-direction: column;
-  }
+  .app-container { flex-direction: column; }
 
-  .left-panel,
-  .right-panel {
+  .left-panel {
     width: 100%;
-    border: none;
-    max-height: 200px;
+    min-width: unset;
+    max-height: 180px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-right: none;
     border-bottom: 1px solid #3a3a3a;
   }
 
-  .left-panel {
-    border-right: none;
-    box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .right-panel {
-    border-left: none;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  .export-section {
+    border-top: none;
+    border-left: 1px solid #3a3a3a;
+    padding: 0.5rem;
   }
 }
-

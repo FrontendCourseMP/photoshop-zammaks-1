@@ -9,94 +9,61 @@ interface ImageUploadProps {
   onReset: () => void;
 }
 
-const ImageUpload = ({
-  onImageLoaded,
-  onReset,
-}: ImageUploadProps) => {
+const ImageUpload = ({ onImageLoaded, onReset }: ImageUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
-  const handleFileSelect = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-
-    const file = files[0];
+  const processFile = async (file: File) => {
     setError('');
     setLoading(true);
-
     try {
-      let imageData: ImageData;
       const fileName = file.name;
+      const nameLower = fileName.toLowerCase();
+      let imageData: ImageData;
 
-      if (file.type === 'image/png' || fileName.toLowerCase().endsWith('.png')) {
+      if (file.type === 'image/png' || nameLower.endsWith('.png')) {
         imageData = await loadPNGorJPG(file);
-      } else if (file.type === 'image/jpeg' || fileName.toLowerCase().endsWith('.jpg') || fileName.toLowerCase().endsWith('.jpeg')) {
+      } else if (
+        file.type === 'image/jpeg' ||
+        nameLower.endsWith('.jpg') ||
+        nameLower.endsWith('.jpeg')
+      ) {
         imageData = await loadPNGorJPG(file);
-      } else if (fileName.toLowerCase().endsWith('.gb7')) {
-        const arrayBuffer = await file.arrayBuffer();
-        imageData = decodeGB7(arrayBuffer);
+      } else if (nameLower.endsWith('.gb7')) {
+        imageData = decodeGB7(await file.arrayBuffer());
       } else {
-        throw new Error(
-          'Неподдерживаемый формат. Используйте PNG, JPG или GB7'
-        );
+        throw new Error('Неподдерживаемый формат. Используйте PNG, JPG или GB7');
       }
 
       onImageLoaded(imageData, fileName);
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Ошибка при загрузке файла';
-      setError(errorMessage);
-      console.error('Ошибка загрузки:', err);
+      setError(err instanceof Error ? err.message : 'Ошибка при загрузке файла');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) processFile(file);
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    event.stopPropagation();
     event.dataTransfer.dropEffect = 'copy';
   };
 
-  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    event.stopPropagation();
+    const file = event.dataTransfer.files[0];
+    if (file) processFile(file);
+  };
 
-    const files = event.dataTransfer.files;
-    if (files.length === 0) return;
-
-    const file = files[0];
+  const handleReset = () => {
+    if (fileInputRef.current) fileInputRef.current.value = '';
     setError('');
-    setLoading(true);
-
-    try {
-      let imageData: ImageData;
-      const fileName = file.name;
-
-      if (file.type === 'image/png' || fileName.toLowerCase().endsWith('.png')) {
-        imageData = await loadPNGorJPG(file);
-      } else if (file.type === 'image/jpeg' || fileName.toLowerCase().endsWith('.jpg') || fileName.toLowerCase().endsWith('.jpeg')) {
-        imageData = await loadPNGorJPG(file);
-      } else if (fileName.toLowerCase().endsWith('.gb7')) {
-        const arrayBuffer = await file.arrayBuffer();
-        imageData = decodeGB7(arrayBuffer);
-      } else {
-        throw new Error(
-          'Неподдерживаемый формат. Используйте PNG, JPG или GB7'
-        );
-      }
-
-      onImageLoaded(imageData, fileName);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Ошибка при загрузке файла';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+    onReset();
   };
 
   return (
@@ -108,10 +75,9 @@ const ImageUpload = ({
         onClick={() => fileInputRef.current?.click()}
       >
         <div className="upload-icon">📁</div>
-        <h2>Открыть</h2>
-        <p>PNG, JPG, GB7</p>
-        <p className="highlight">или Drag & Drop</p>
-        {loading && <p className="loading">Загрузка...</p>}
+        <p className="upload-title">Открыть</p>
+        <p className="upload-hint">PNG · JPG · GB7</p>
+        {loading && <p className="upload-loading">Загрузка...</p>}
       </div>
 
       <input
@@ -122,20 +88,10 @@ const ImageUpload = ({
         style={{ display: 'none' }}
       />
 
-      {error && <div className="error">{error}</div>}
+      {error && <div className="upload-error">{error}</div>}
 
-      <div className="button-group">
-        <button
-          onClick={() => {
-            if (fileInputRef.current) {
-              fileInputRef.current.value = '';
-            }
-            onReset();
-          }}
-          className="btn btn-reset"
-        >
-          Очистить
-        </button>
+      <div className="upload-actions">
+        <button onClick={handleReset} className="btn btn-reset">Очистить</button>
       </div>
     </div>
   );
