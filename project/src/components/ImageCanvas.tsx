@@ -9,9 +9,10 @@ interface ImageCanvasProps {
   activeChannels: Set<ChannelKey>;
   activeTool: 'eyedropper' | null;
   onPixelPick: (x: number, y: number, r: number, g: number, b: number) => void;
+  sourceOverride?: Uint8Array; // preview data from Levels dialog
 }
 
-const ImageCanvas = ({ imageData, activeChannels, activeTool, onPixelPick }: ImageCanvasProps) => {
+const ImageCanvas = ({ imageData, activeChannels, activeTool, onPixelPick, sourceOverride }: ImageCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -24,11 +25,12 @@ const ImageCanvas = ({ imageData, activeChannels, activeTool, onPixelPick }: Ima
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const display = applyChannelMask(imageData.data, activeChannels, isGrayscaleImage(imageData));
+    const source = sourceOverride ?? imageData.data;
+    const display = applyChannelMask(source, activeChannels, isGrayscaleImage(imageData));
     const imgData = ctx.createImageData(imageData.width, imageData.height);
     imgData.data.set(display);
     ctx.putImageData(imgData, 0, 0);
-  }, [imageData, activeChannels]);
+  }, [imageData, activeChannels, sourceOverride]);
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (activeTool !== 'eyedropper') return;

@@ -3,20 +3,17 @@
   border-top: 1px solid #3a3a3a;
 }
 
-.ch-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 130px));
-  gap: 0.4rem;
+.ch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
   margin-top: 0.4rem;
 }
 
-/* Одиночный или последний нечётный элемент — на всю ширину */
-.ch-item:only-child,
-.ch-item:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
-}
-
 .ch-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
   border-radius: 3px;
   border: 1.5px solid #383838;
@@ -24,6 +21,7 @@
   opacity: 0.38;
   transition: opacity 0.15s, border-color 0.15s;
   user-select: none;
+  padding: 0.15rem 0.35rem 0.15rem 0.25rem;
 }
 
 .ch-item:hover {
@@ -42,19 +40,18 @@
 
 .ch-thumb {
   display: block;
-  width: 100%;
-  height: 56px; /* фиксированная высота — одинакова для всех миниатюр */
+  width: 48px;
+  height: auto;
+  flex-shrink: 0;
+  border-radius: 1px;
   image-rendering: auto;
 }
 
 .ch-label {
-  display: block;
-  text-align: center;
-  font-size: 0.68rem;
-  padding: 0.12rem 0;
-  background: #1e1e1e;
+  font-size: 0.72rem;
   color: #777;
   letter-spacing: 0.3px;
+  flex: 1;
 }
 
 .ch-item.active .ch-label {

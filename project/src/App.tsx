@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import ImageCanvas from './components/ImageCanvas';
 import ImageUpload from './components/ImageUpload';
 import StatusBar from './components/StatusBar';
 import ChannelPanel from './components/ChannelPanel';
+import LevelsDialog from './components/LevelsDialog';
 import type { ImageData } from './types';
 import type { ChannelKey } from './channelUtils';
 import { getChannels } from './channelUtils';
@@ -29,6 +30,8 @@ function App() {
   const [activeChannels, setActiveChannels] = useState<Set<ChannelKey>>(new Set());
   const [activeTool, setActiveTool] = useState<'eyedropper' | null>(null);
   const [pickedPixel, setPickedPixel] = useState<PickedPixel | null>(null);
+  const [showLevels, setShowLevels] = useState(false);
+  const [levelsPreview, setLevelsPreview] = useState<Uint8Array | null>(null);
 
   const handleImageLoaded = (data: ImageData, name: string) => {
     const channels = getChannels(data);
@@ -44,7 +47,22 @@ function App() {
     setActiveChannels(new Set());
     setPickedPixel(null);
     setActiveTool(null);
+    setShowLevels(false);
+    setLevelsPreview(null);
   };
+
+  const handleLevelsPreview = useCallback((data: Uint8Array | null) => {
+    setLevelsPreview(data);
+  }, []);
+
+  const handleLevelsApply = useCallback((data: Uint8Array) => {
+    setImageData(prev => prev ? { ...prev, data } : null);
+  }, []);
+
+  const handleLevelsClose = useCallback(() => {
+    setLevelsPreview(null);
+    setShowLevels(false);
+  }, []);
 
   const handleToggleChannel = (key: ChannelKey) => {
     setActiveChannels(prev => {
@@ -115,6 +133,14 @@ function App() {
                   >
                     Пипетка
                   </button>
+                  <button
+                    className={`btn tool-btn${showLevels ? ' active' : ''}`}
+                    onClick={() => setShowLevels(true)}
+                    disabled={showLevels}
+                    title="Градационная коррекция уровней"
+                  >
+                    Уровни
+                  </button>
                 </div>
               </div>
 
@@ -130,21 +156,25 @@ function App() {
               {pickedPixel && (
                 <div className="side-section pixel-info">
                   <span className="section-label">Пиксель</span>
-                  <div className="px-row">
+                  <div className="px-header">
                     <div
                       className="px-swatch"
                       style={{ background: `rgb(${pickedPixel.r},${pickedPixel.g},${pickedPixel.b})` }}
                     />
-                    <div className="px-grid">
+                    <div className="px-coords">
                       <span className="px-key">X</span><span className="px-val">{pickedPixel.x}</span>
                       <span className="px-key">Y</span><span className="px-val">{pickedPixel.y}</span>
-                      <span className="px-key">R</span><span className="px-val">{pickedPixel.r}</span>
-                      <span className="px-key">G</span><span className="px-val">{pickedPixel.g}</span>
-                      <span className="px-key">B</span><span className="px-val">{pickedPixel.b}</span>
-                      <span className="px-key">L*</span><span className="px-val">{pickedPixel.L.toFixed(1)}</span>
-                      <span className="px-key">a*</span><span className="px-val">{pickedPixel.labA.toFixed(1)}</span>
-                      <span className="px-key">b*</span><span className="px-val">{pickedPixel.labB.toFixed(1)}</span>
                     </div>
+                  </div>
+                  <div className="px-color-row">
+                    <span className="px-key">R</span><span className="px-val">{pickedPixel.r}</span>
+                    <span className="px-key">G</span><span className="px-val">{pickedPixel.g}</span>
+                    <span className="px-key">B</span><span className="px-val">{pickedPixel.b}</span>
+                  </div>
+                  <div className="px-color-row">
+                    <span className="px-key">L*</span><span className="px-val">{pickedPixel.L.toFixed(1)}</span>
+                    <span className="px-key">a*</span><span className="px-val">{pickedPixel.labA.toFixed(1)}</span>
+                    <span className="px-key">b*</span><span className="px-val">{pickedPixel.labB.toFixed(1)}</span>
                   </div>
                 </div>
               )}
@@ -170,6 +200,7 @@ function App() {
               activeChannels={activeChannels}
               activeTool={activeTool}
               onPixelPick={handlePixelPick}
+              sourceOverride={levelsPreview ?? undefined}
             />
           ) : (
             <div className="canvas-placeholder">
@@ -178,6 +209,15 @@ function App() {
           )}
         </main>
       </div>
+
+      {showLevels && imageData && (
+        <LevelsDialog
+          imageData={imageData}
+          onPreview={handleLevelsPreview}
+          onApply={handleLevelsApply}
+          onClose={handleLevelsClose}
+        />
+      )}
 
       <footer className="app-footer">
         <StatusBar imageData={imageData} fileName={fileName} compact />

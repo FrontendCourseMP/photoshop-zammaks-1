@@ -4,8 +4,7 @@ import type { Channel, ChannelKey } from '../channelUtils';
 import { renderChannelThumbnail } from '../channelUtils';
 import '../styles/ChannelPanel.css';
 
-const THUMB_W = 80; // фиксированный размер миниатюры
-const THUMB_H = 56;
+const THUMB_W = 80;
 
 interface ThumbProps {
   imageData: ImageData;
@@ -25,13 +24,14 @@ const ChannelThumb = ({ imageData, channelKey, label, active, onToggle }: ThumbP
     if (!ctx) return;
 
     const { width, height, data } = imageData;
+    const thumbH = Math.max(1, Math.round(THUMB_W * height / width));
 
     canvas.width  = THUMB_W;
-    canvas.height = THUMB_H;
+    canvas.height = thumbH;
 
-    const pixels = renderChannelThumbnail(data, width, height, channelKey, THUMB_W, THUMB_H);
+    const pixels = renderChannelThumbnail(data, width, height, channelKey, THUMB_W, thumbH);
     // ctx.createImageData возвращает ImageData с правильным типом Uint8ClampedArray
-    const imgData = ctx.createImageData(THUMB_W, THUMB_H);
+    const imgData = ctx.createImageData(THUMB_W, thumbH);
     imgData.data.set(pixels);
     ctx.putImageData(imgData, 0, 0);
   }, [imageData, channelKey]);
@@ -58,7 +58,7 @@ interface ChannelPanelProps {
 const ChannelPanel = ({ imageData, channels, activeChannels, onToggleChannel }: ChannelPanelProps) => (
   <div className="channel-panel">
     <span className="section-label">Каналы</span>
-    <div className="ch-grid">
+    <div className="ch-list">
       {channels.map(ch => (
         <ChannelThumb
           key={ch.key}
