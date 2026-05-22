@@ -1,0 +1,256 @@
+/* ── Dialog ─────────────────────────────────────────────────────────────────── */
+/* dialog.show() (не showModal) — нет backdrop, фон остаётся интерактивным     */
+.rd-dialog {
+  position: fixed;
+  margin: 0;
+  background: #252526;
+  color: #d0d0d0;
+  border: 1px solid #3a3a3a;
+  border-radius: 5px;
+  padding: 0;
+  width: 360px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  font-size: 0.78rem;
+  font-family: inherit;
+  z-index: 1000;
+}
+
+/* ── Titlebar (перетаскивается) ─────────────────────────────────────────────── */
+.rd-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #2d2d2d;
+  border-bottom: 1px solid #3a3a3a;
+  border-radius: 5px 5px 0 0;
+  padding: 0.42rem 0.6rem 0.42rem 0.85rem;
+  cursor: move;
+  user-select: none;
+}
+
+.rd-titlebar span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ccc;
+  letter-spacing: 0.3px;
+}
+
+.rd-close-btn {
+  background: none;
+  border: none;
+  color: #777;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  line-height: 1;
+  border-radius: 2px;
+  transition: color 0.12s, background 0.12s;
+}
+
+.rd-close-btn:hover {
+  color: #ddd;
+  background: #444;
+}
+
+/* ── Body ───────────────────────────────────────────────────────────────────── */
+.rd-body {
+  padding: 0.75rem 0.85rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+/* ── Pixel count info ───────────────────────────────────────────────────────── */
+.rd-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #1e1e1e;
+  border: 1px solid #383838;
+  border-radius: 4px;
+  padding: 0.45rem 0.65rem;
+}
+
+.rd-info-item {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.rd-info-label {
+  font-size: 0.65rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.rd-info-val {
+  font-size: 0.8rem;
+  color: #c8c8c8;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+
+.rd-arrow {
+  color: #555;
+  font-size: 1rem;
+}
+
+/* ── Generic row ────────────────────────────────────────────────────────────── */
+.rd-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rd-label {
+  color: #888;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.rd-select {
+  flex: 1;
+  background: #333;
+  color: #d0d0d0;
+  border: 1px solid #484848;
+  border-radius: 3px;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.rd-select:focus { border-color: #5a8ec4; }
+
+/* ── Dimensions block ───────────────────────────────────────────────────────── */
+.rd-dims {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.rd-dim-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.rd-dim-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.rd-num {
+  width: 80px;
+  background: #1e1e1e;
+  color: #d0d0d0;
+  border: 1px solid #484848;
+  border-radius: 3px;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.75rem;
+  font-family: 'Monaco', 'Menlo', monospace;
+  text-align: right;
+  outline: none;
+}
+
+.rd-num:focus { border-color: #5a8ec4; }
+.rd-num.rd-err { border-color: #c04040; }
+
+.rd-num::-webkit-inner-spin-button,
+.rd-num::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.rd-num[type='number'] { -moz-appearance: textfield; }
+
+.rd-unit {
+  font-size: 0.7rem;
+  color: #777;
+  width: 24px;
+}
+
+.rd-error-msg {
+  font-size: 0.65rem;
+  color: #e05050;
+  width: 100%;
+  padding-left: 74px;
+  margin-top: -0.25rem;
+}
+
+/* ── Aspect ratio link ──────────────────────────────────────────────────────── */
+.rd-link-row {
+  display: flex;
+  align-items: center;
+  padding: 0.15rem 0 0.15rem 70px;
+  gap: 0.3rem;
+}
+
+.rd-link-line {
+  flex: none;
+  width: 18px;
+  height: 1px;
+  background: #444;
+}
+
+.rd-link-btn {
+  background: none;
+  border: 1px solid #444;
+  border-radius: 3px;
+  padding: 0.1rem 0.25rem;
+  font-size: 0.72rem;
+  cursor: pointer;
+  color: #777;
+  line-height: 1;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.rd-link-btn:hover { border-color: #666; color: #aaa; }
+.rd-link-btn.active { border-color: #5a8ec4; color: #7aaee0; }
+
+/* ── Interpolation tooltip ──────────────────────────────────────────────────── */
+.rd-interp-row { margin-top: 0.1rem; }
+
+.rd-tooltip-box {
+  background: #1a1a1a;
+  border: 1px solid #383838;
+  border-radius: 3px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.68rem;
+  color: #888;
+  line-height: 1.5;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────────── */
+.rd-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.5rem 0.85rem 0.65rem;
+  border-top: 1px solid #333;
+  gap: 0.5rem;
+}
+
+.rd-applying {
+  font-size: 0.7rem;
+  color: #7dd3fc;
+  margin-right: auto;
+}
+
+.rd-footer-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.rd-btn-apply {
+  background: #3d5a8a;
+  border-color: #5a7aaa;
+  color: #e8e8e8;
+}
+
+.rd-btn-apply:hover:not(:disabled) {
+  background: #4a6a9a;
+  border-color: #6a8aaa;
+}

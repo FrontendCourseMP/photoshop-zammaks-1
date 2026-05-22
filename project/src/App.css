@@ -149,6 +149,7 @@
 
 /* ─── Основной холст ────────────────────────────────── */
 .main-content {
+  position: relative;
   flex: 1;
   display: flex;
   align-items: center;
@@ -162,6 +163,52 @@
   font-size: 1rem;
 }
 
+/* ─── Плавающая панель масштаба (правый нижний угол) ── */
+.zoom-panel {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(25, 25, 25, 0.88);
+  border: 1px solid #3a3a3a;
+  border-radius: 5px;
+  padding: 0.45rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  z-index: 10;
+  min-width: 210px;
+}
+
+.zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.zoom-slider {
+  flex: 1;
+  accent-color: #5a8ec4;
+  cursor: pointer;
+}
+
+.zoom-select {
+  background: #2e2e2e;
+  color: #d0d0d0;
+  border: 1px solid #484848;
+  border-radius: 3px;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.72rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.zoom-select:focus { border-color: #5a8ec4; }
+
+.zoom-pct-select {
+  width: 64px;
+  flex-shrink: 0;
+}
+
 /* ─── Подвал ────────────────────────────────────────── */
 .app-footer {
   background: #2d2d2d;
@@ -169,6 +216,15 @@
   padding: 0.35rem 1rem;
   font-size: 0.8rem;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-scale {
+  font-size: 0.72rem;
+  color: #666;
+  font-family: 'Monaco', 'Menlo', monospace;
 }
 
 /* ─── Анимации ──────────────────────────────────────── */

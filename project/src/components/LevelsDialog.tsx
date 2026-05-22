@@ -152,11 +152,17 @@ const LevelsDialog = ({ imageData, onPreview, onApply, onClose }: Props) => {
     dialog.style.top  = '80px';
 
     dialog.show(); // non-modal: no backdrop, background stays interactive
+    // No cleanup: React removes the element from DOM on unmount.
+    // dialog.close() here would fire 'close' → setShowLevels(false) → StrictMode loop.
+  }, []);
 
-    return () => {
-      // Cleanup: close if still open when component unmounts
-      if (dialog.open) dialog.close();
-    };
+  // ── Native close (Escape key or dialog.close()) ────────────────────────────
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const h = () => onCloseRef.current();
+    dialog.addEventListener('close', h);
+    return () => dialog.removeEventListener('close', h);
   }, []);
 
   // ── Window drag (titlebar) ──────────────────────────────────────────────────
@@ -187,7 +193,6 @@ const LevelsDialog = ({ imageData, onPreview, onApply, onClose }: Props) => {
     () => computeHistogram(imageData.data, channel),
     [imageData.data, channel],
   );
-
   // ── Canvas redraw ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -205,6 +210,15 @@ const LevelsDialog = ({ imageData, onPreview, onApply, onClose }: Props) => {
       }
       rafRef.current = null;
     });
+    // Cancel the pending rAF when deps change or component unmounts.
+    // Without this, the rAF fires after Apply commits the new imageData and
+    // calls applyLevels on already-adjusted data, causing a double application.
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
   }, [levels, previewEnabled, imageData]);
 
   // ── Settings update (uses channelRef so handler stays stable) ──────────────
@@ -272,16 +286,20 @@ const LevelsDialog = ({ imageData, onPreview, onApply, onClose }: Props) => {
 
   const handleCancel = () => {
     onPreviewRef.current(null);
-    onCloseRef.current();
-    dialogRef.current?.close();
+    dialogRef.current?.close(); // fires 'close' → listener calls onClose
   };
 
   const handleApply = () => {
+    // Cancel pending preview rAF before committing — prevents it from firing
+    // with the new imageData after onApply updates state.
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
     const adjusted = applyLevels(imageData.data, levels, imageData.hasAlpha);
-    onApply(adjusted);
     onPreviewRef.current(null);
-    onCloseRef.current();
-    dialogRef.current?.close();
+    onApply(adjusted);
+    dialogRef.current?.close(); // fires 'close' → listener calls onClose
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
