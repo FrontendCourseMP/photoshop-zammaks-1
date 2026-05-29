@@ -11,6 +11,7 @@ import {
   gammaToFraction,
   fractionToGamma,
 } from '../levelsUtils';
+import { isGrayscaleImage } from '../channelUtils';
 import '../styles/LevelsDialog.css';
 
 const HIST_W  = 256;
@@ -25,6 +26,7 @@ const CHANNEL_COLORS: Record<LevelsChannel, string> = {
   g: '#3ea83e',
   b: '#3870d0',
   a: '#888888',
+  gray: '#aaaaaa',
 };
 
 const CHANNEL_LABELS: Record<LevelsChannel, string> = {
@@ -33,6 +35,7 @@ const CHANNEL_LABELS: Record<LevelsChannel, string> = {
   g: 'Зелёный',
   b: 'Синий',
   a: 'Альфа',
+  gray: 'Серый',
 };
 
 type SliderTarget = 'black' | 'white' | 'gamma' | null;
@@ -130,8 +133,12 @@ const LevelsDialog = ({ imageData, onPreview, onApply, onClose }: Props) => {
   const settingsRef    = useRef<LevelsSettings>(defaultSettings());
   const rafRef         = useRef<number | null>(null);
 
+  const isGray = isGrayscaleImage(imageData);
+
   // Dialog state
-  const [channel,        setChannel]        = useState<LevelsChannel>('master');
+  const [channel,        setChannel]        = useState<LevelsChannel>(() =>
+    imageData.depth <= 8 ? 'gray' : 'master',
+  );
   const [levels,         setLevels]         = useState<ChannelLevels>(defaultChannelLevels);
   const [logScale,       setLogScale]       = useState(false);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -204,7 +211,7 @@ const LevelsDialog = ({ imageData, onPreview, onApply, onClose }: Props) => {
     if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() => {
       if (previewEnabled) {
-        onPreviewRef.current(applyLevels(imageData.data, levels, imageData.hasAlpha));
+        onPreviewRef.current(applyLevels(imageData.data, levels, imageData.hasAlpha, imageData.depth <= 8));
       } else {
         onPreviewRef.current(null);
       }
@@ -296,7 +303,7 @@ const LevelsDialog = ({ imageData, onPreview, onApply, onClose }: Props) => {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
-    const adjusted = applyLevels(imageData.data, levels, imageData.hasAlpha);
+    const adjusted = applyLevels(imageData.data, levels, imageData.hasAlpha, imageData.depth <= 8);
     onPreviewRef.current(null);
     onApply(adjusted);
     dialogRef.current?.close(); // fires 'close' → listener calls onClose
@@ -305,13 +312,18 @@ const LevelsDialog = ({ imageData, onPreview, onApply, onClose }: Props) => {
   // ── Render ─────────────────────────────────────────────────────────────────
   const { inputBlack, inputWhite, gamma } = currentSettings;
 
-  const channelOptions: Array<{ key: LevelsChannel; label: string }> = [
-    { key: 'master', label: CHANNEL_LABELS.master },
-    { key: 'r',      label: CHANNEL_LABELS.r },
-    { key: 'g',      label: CHANNEL_LABELS.g },
-    { key: 'b',      label: CHANNEL_LABELS.b },
-    ...(imageData.hasAlpha ? [{ key: 'a' as LevelsChannel, label: CHANNEL_LABELS.a }] : []),
-  ];
+  const channelOptions: Array<{ key: LevelsChannel; label: string }> = isGray
+    ? [
+        { key: 'gray', label: CHANNEL_LABELS.gray },
+        ...(imageData.hasAlpha ? [{ key: 'a' as LevelsChannel, label: CHANNEL_LABELS.a }] : []),
+      ]
+    : [
+        { key: 'master', label: CHANNEL_LABELS.master },
+        { key: 'r',      label: CHANNEL_LABELS.r },
+        { key: 'g',      label: CHANNEL_LABELS.g },
+        { key: 'b',      label: CHANNEL_LABELS.b },
+        ...(imageData.hasAlpha ? [{ key: 'a' as LevelsChannel, label: CHANNEL_LABELS.a }] : []),
+      ];
 
   return (
     <dialog ref={dialogRef} className="levels-dialog">

@@ -28,8 +28,8 @@
 
 /* ─── Левая панель ──────────────────────────────────── */
 .left-panel {
-  width: 200px;
-  min-width: 200px;
+  width: 300px;
+  min-width: 300px;
   background: #252526;
   border-right: 1px solid #3a3a3a;
   overflow-y: auto;

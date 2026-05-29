@@ -1,4 +1,4 @@
-export type LevelsChannel = 'master' | 'r' | 'g' | 'b' | 'a';
+export type LevelsChannel = 'master' | 'r' | 'g' | 'b' | 'a' | 'gray';
 
 export interface LevelsSettings {
   inputBlack: number; // 0-255
@@ -12,6 +12,7 @@ export interface ChannelLevels {
   g: LevelsSettings;
   b: LevelsSettings;
   a: LevelsSettings;
+  gray: LevelsSettings;
 }
 
 export function defaultSettings(): LevelsSettings {
@@ -25,6 +26,7 @@ export function defaultChannelLevels(): ChannelLevels {
     g: defaultSettings(),
     b: defaultSettings(),
     a: defaultSettings(),
+    gray: defaultSettings(),
   };
 }
 
@@ -55,21 +57,32 @@ export function applyLevels(
   src: Uint8Array,
   levels: ChannelLevels,
   hasAlpha: boolean,
+  grayscale = false,
 ): Uint8Array {
-  const mLUT = buildLUT(levels.master);
-  const rLUT = buildLUT(levels.r);
-  const gLUT = buildLUT(levels.g);
-  const bLUT = buildLUT(levels.b);
-  const aLUT = buildLUT(levels.a);
   const out = new Uint8Array(src.length);
   const n = src.length >>> 2;
+  const aLUT = buildLUT(levels.a);
 
-  for (let i = 0; i < n; i++) {
-    const p = i * 4;
-    out[p]     = rLUT[mLUT[src[p]]];
-    out[p + 1] = gLUT[mLUT[src[p + 1]]];
-    out[p + 2] = bLUT[mLUT[src[p + 2]]];
-    out[p + 3] = hasAlpha ? aLUT[src[p + 3]] : src[p + 3];
+  if (grayscale) {
+    const grayLUT = buildLUT(levels.gray);
+    for (let i = 0; i < n; i++) {
+      const p = i * 4;
+      const v = grayLUT[src[p]];
+      out[p] = v; out[p + 1] = v; out[p + 2] = v;
+      out[p + 3] = hasAlpha ? aLUT[src[p + 3]] : src[p + 3];
+    }
+  } else {
+    const mLUT = buildLUT(levels.master);
+    const rLUT = buildLUT(levels.r);
+    const gLUT = buildLUT(levels.g);
+    const bLUT = buildLUT(levels.b);
+    for (let i = 0; i < n; i++) {
+      const p = i * 4;
+      out[p]     = rLUT[mLUT[src[p]]];
+      out[p + 1] = gLUT[mLUT[src[p + 1]]];
+      out[p + 2] = bLUT[mLUT[src[p + 2]]];
+      out[p + 3] = hasAlpha ? aLUT[src[p + 3]] : src[p + 3];
+    }
   }
 
   return out;
@@ -94,6 +107,7 @@ export function computeHistogram(
       case 'r': v = data[p]; break;
       case 'g': v = data[p + 1]; break;
       case 'b': v = data[p + 2]; break;
+      case 'gray': v = data[p]; break; // R=G=B for grayscale images
       default:  v = data[p + 3]; break;
     }
     hist[v]++;

@@ -1,0 +1,222 @@
+/* ── Dialog shell ──────────────────────────────────────────────────────────── */
+/* dialog.show() (non-modal) — no backdrop, no screen lock */
+.conv-dialog {
+  position: fixed;
+  margin: 0;
+  background: #252526;
+  color: #d0d0d0;
+  border: 1px solid #3a3a3a;
+  border-radius: 5px;
+  padding: 0;
+  width: 380px;
+  min-width: 340px;
+  max-width: 440px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+  font-size: 0.78rem;
+  font-family: inherit;
+  z-index: 1100;
+}
+
+/* ── Titlebar ──────────────────────────────────────────────────────────────── */
+.conv-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #2d2d2d;
+  border-bottom: 1px solid #3a3a3a;
+  border-radius: 5px 5px 0 0;
+  padding: 0.42rem 0.6rem 0.42rem 0.85rem;
+  cursor: move;
+  user-select: none;
+}
+
+.conv-titlebar span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ccc;
+  letter-spacing: 0.3px;
+}
+
+.conv-close-btn {
+  background: none;
+  border: none;
+  color: #777;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  line-height: 1;
+  border-radius: 2px;
+  transition: color 0.12s, background 0.12s;
+}
+
+.conv-close-btn:hover {
+  color: #ddd;
+  background: #444;
+}
+
+/* ── Body ──────────────────────────────────────────────────────────────────── */
+.conv-body {
+  padding: 0.7rem 0.85rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+/* ── Section label ─────────────────────────────────────────────────────────── */
+.conv-section-label {
+  color: #777;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+/* ── Row ───────────────────────────────────────────────────────────────────── */
+.conv-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.conv-label {
+  color: #888;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  min-width: 56px;
+}
+
+.conv-select {
+  flex: 1;
+  background: #333;
+  color: #d0d0d0;
+  border: 1px solid #484848;
+  border-radius: 3px;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.conv-select:focus {
+  border-color: #5a8ec4;
+}
+
+/* ── Kernel grid ───────────────────────────────────────────────────────────── */
+.conv-kernel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.conv-kernel-cell {
+  background: #1e1e1e;
+  color: #d0d0d0;
+  border: 1px solid #484848;
+  border-radius: 3px;
+  padding: 0.25rem 0.2rem;
+  font-size: 0.72rem;
+  font-family: 'Monaco', 'Menlo', monospace;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.conv-kernel-cell:focus {
+  border-color: #5a8ec4;
+}
+
+.conv-kernel-cell::-webkit-inner-spin-button,
+.conv-kernel-cell::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.conv-kernel-cell[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* ── Channel checkboxes ────────────────────────────────────────────────────── */
+.conv-channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.conv-check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  color: #999;
+  font-size: 0.72rem;
+  user-select: none;
+}
+
+.conv-check-label input[type='checkbox'] {
+  accent-color: #5a8ec4;
+  cursor: pointer;
+}
+
+/* ── Edge handling ─────────────────────────────────────────────────────────── */
+.conv-edge-group {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.conv-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  color: #999;
+  font-size: 0.72rem;
+  user-select: none;
+}
+
+.conv-radio-label input[type='radio'] {
+  accent-color: #5a8ec4;
+  cursor: pointer;
+}
+
+/* ── Preview row ───────────────────────────────────────────────────────────── */
+.conv-preview-row {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Processing indicator ──────────────────────────────────────────────────── */
+.conv-processing {
+  font-size: 0.7rem;
+  color: #5a8ec4;
+  font-style: italic;
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+.conv-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.85rem 0.65rem;
+  border-top: 1px solid #333;
+  gap: 0.4rem;
+  min-height: 2.4rem;
+}
+
+.conv-footer-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.conv-btn-apply {
+  background: #3d5a8a;
+  border-color: #5a7aaa;
+  color: #e8e8e8;
+}
+
+.conv-btn-apply:hover:not(:disabled) {
+  background: #4a6a9a;
+  border-color: #6a8aaa;
+}

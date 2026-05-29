@@ -5,6 +5,7 @@ import StatusBar from './components/StatusBar';
 import ChannelPanel from './components/ChannelPanel';
 import LevelsDialog from './components/LevelsDialog';
 import ResizeDialog from './components/ResizeDialog';
+import ConvolutionDialog from './components/ConvolutionDialog';
 import type { ImageData } from './types';
 import type { ChannelKey } from './channelUtils';
 import { getChannels } from './channelUtils';
@@ -36,6 +37,8 @@ function App() {
   const [levelsPreview,      setLevelsPreview]      = useState<Uint8Array | null>(null);
   const [levelsSnapshotData, setLevelsSnapshotData] = useState<Uint8Array | null>(null);
   const [showResize,         setShowResize]         = useState(false);
+  const [showConvolution,    setShowConvolution]    = useState(false);
+  const [convPreview,        setConvPreview]        = useState<Uint8Array | null>(null);
 
   // ── Display scale & interpolation ─────────────────────────────────────────
   const [displayScale,  setDisplayScale]  = useState(1.0);
@@ -76,6 +79,8 @@ function App() {
     setLevelsPreview(null);
     setLevelsSnapshotData(null);
     setShowResize(false);
+    setShowConvolution(false);
+    setConvPreview(null);
     setDisplayScale(1.0);
   };
 
@@ -107,6 +112,17 @@ function App() {
   }, []);
 
   // Resize
+  // Convolution
+  const handleConvPreview = useCallback((data: Uint8Array | null) => setConvPreview(data), []);
+  const handleConvApply   = useCallback((data: Uint8Array) => {
+    setImageData(prev => prev ? { ...prev, data } : null);
+    setConvPreview(null);
+  }, []);
+  const handleConvClose   = useCallback(() => {
+    setConvPreview(null);
+    setShowConvolution(false);
+  }, []);
+
   const handleResizeApply = useCallback((newData: Uint8Array, newW: number, newH: number) => {
     setImageData(prev => {
       if (!prev) return null;
@@ -176,6 +192,12 @@ function App() {
                     disabled={showResize}
                     title="Изменить размер изображения"
                   >Размер</button>
+                  <button
+                    className={`btn tool-btn${showConvolution ? ' active' : ''}`}
+                    onClick={() => setShowConvolution(true)}
+                    disabled={showConvolution}
+                    title="Фильтрация (свёртка ядром)"
+                  >Фильтры</button>
                 </div>
               </div>
 
@@ -236,7 +258,7 @@ function App() {
                 activeChannels={activeChannels}
                 activeTool={activeTool}
                 onPixelPick={handlePixelPick}
-                sourceOverride={levelsPreview ?? undefined}
+                sourceOverride={levelsPreview ?? convPreview ?? undefined}
                 displayScale={displayScale}
                 interpolation={interpolation}
                 onScaleChange={setDisplayScale}
@@ -298,6 +320,15 @@ function App() {
           imageData={imageData}
           onApply={handleResizeApply}
           onClose={handleResizeClose}
+        />
+      )}
+
+      {showConvolution && imageData && (
+        <ConvolutionDialog
+          imageData={imageData}
+          onPreview={handleConvPreview}
+          onApply={handleConvApply}
+          onClose={handleConvClose}
         />
       )}
 
