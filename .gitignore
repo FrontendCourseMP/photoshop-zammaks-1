@@ -1,3 +1,20 @@
+# Dependencies
+node_modules
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist
+dist-ssr
+build
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
 # Logs
 logs
 *.log
@@ -7,12 +24,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
+# IDE
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -22,3 +34,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code
+.claude
+
+# Temp and local files
+*.local
+*.tmp
+~*

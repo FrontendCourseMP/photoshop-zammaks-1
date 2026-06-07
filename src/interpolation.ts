@@ -24,7 +24,6 @@ export const INTERPOLATION_METHODS: InterpolationInfo[] = [
   },
 ];
 
-/** Предустановленные значения масштаба отображения (в %). */
 export const SCALE_PRESETS = [12, 25, 33, 50, 66, 75, 100, 150, 200, 300] as const;
 
 // ── Nearest-neighbor ─────────────────────────────────────────────────────────
